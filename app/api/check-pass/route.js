@@ -3,7 +3,7 @@ export async function POST(req) {
   try {
     const { password } = await req.json();
 
-    if (password === process.env.ADMIN_PASS) {
+    if (password === process.env.ADMIN_PASSS) {
       return new Response(JSON.stringify({ success: true }), { status: 200 });
     } else {
       return new Response(JSON.stringify({ success: false }), { status: 401 });
