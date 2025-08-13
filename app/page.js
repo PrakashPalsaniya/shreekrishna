@@ -12,7 +12,7 @@ export default function HomePage() {
 
   const checkPass = async () => {
     setIsAuthLoading(true)
-    // Simulate a small delay for better UX
+    
     await new Promise((resolve) => setTimeout(resolve, 500))
 
     if (password === process.env.NEXT_PUBLIC_ADMIN_PASS) {
