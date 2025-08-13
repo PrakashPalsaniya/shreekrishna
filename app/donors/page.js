@@ -37,7 +37,7 @@ export default function DonorsPage() {
       : null
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-blue-100 relative">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-blue-100 relative pb-20">
       <div className="absolute top-4 left-4 text-yellow-500 opacity-30">
         <div className="w-12 h-12 rounded-full overflow-hidden shadow-lg border-2 border-yellow-400/50">
           <Image
@@ -248,19 +248,19 @@ export default function DonorsPage() {
         </div>
       </div>
 
-      {/* Footer */}
-      <footer className="bg-gradient-to-r from-indigo-800 via-blue-700 to-purple-800 text-white py-8 mt-12">
+      {/* Fixed Footer */}
+      <footer className="fixed bottom-0 left-0 right-0 bg-gradient-to-r from-indigo-800 via-blue-700 to-purple-800 text-white py-3 shadow-2xl z-50">
         <div className="max-w-6xl mx-auto px-4">
           <div className="text-center">
-            <div className="flex items-center justify-center mb-4">
-              <span className="text-indigo-200">Made with</span>
-              <Heart className="w-5 h-5 mx-2 text-red-400 fill-current animate-pulse" />
-              <span className="text-indigo-200">by</span>
+            <div className="flex items-center justify-center mb-1">
+              <span className="text-indigo-200 text-xs md:text-sm">Made with</span>
+              <Heart className="w-3 h-3 md:w-4 md:h-4 mx-1 md:mx-2 text-red-400 fill-current animate-pulse" />
+              <span className="text-indigo-200 text-xs md:text-sm">by</span>
             </div>
-            <div className="text-lg font-semibold text-white mb-2">
+            <div className="text-sm md:text-base font-semibold text-white mb-1">
               Prakash Palsaniya, Gyan Prakash & Kanhaiya Yadav
             </div>
-            <div className="text-indigo-200 text-sm">
+            <div className="text-indigo-200 text-xs">
               2023 IT Branch Students
             </div>
           </div>
