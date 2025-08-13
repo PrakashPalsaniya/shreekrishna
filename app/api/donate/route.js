@@ -37,31 +37,35 @@ export async function POST(req) {
       from: process.env.EMAIL_USER,
       to: email,
       subject: "Thank you for your donation!",
-     text: `Dear ${name},
+ text: `Dear ${name},
 
 We are deeply grateful for your generous contribution of ₹${amount} towards the upcoming Janmashtami celebrations. Your support helps us keep our traditions alive and make the event memorable for everyone.
 
 We are delighted to invite you to join us in the celebrations:
 
-📅 Date: 16th August, 2025  
-🕓 Time: 4:00 PM onwards  
-📍 Venue: Common Hall, NIT Srinagar  
+📅 Date: 16th August, 2025
+🕓 Time: 4:00 PM onwards
+📍 Venue: Common Hall, NIT Srinagar
 
-🎉 कार्यक्रम / Schedule:  
-दही हांडी: 4 PM  
-पूजन: 5 PM  
-भजन: 6 PM  
-प्रसाद वितरण: 7 PM  
+🎉 कार्यक्रम / Schedule:
+दही हांडी: 4 PM
+पूजन: 5 PM
+भजन: 6 PM
+प्रसाद वितरण: 7 PM
 
-Dahi Handi: 4 PM  
-Pujan: 5 PM  
-Bhajan: 6 PM  
-Prasad Distribution: 7 PM  
+Dahi Handi: 4 PM
+Pujan: 5 PM
+Bhajan: 6 PM
+Prasad Distribution: 7 PM
+
+You can view the full donor list (including your entry) here:
+https://shreekrishna.vercel.app/donors
 
 We look forward to celebrating together!
 
-With gratitude,  
-[Your Organization/Temple Name]`
+With gratitude,
+Organising Committee, NIT Srinagar`
+
 
     });
 
