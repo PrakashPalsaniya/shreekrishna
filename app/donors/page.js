@@ -249,23 +249,7 @@ export default function DonorsPage() {
       </div>
 
       {/* Fixed Footer */}
-      <footer className="fixed bottom-0 left-0 right-0 bg-gradient-to-r from-indigo-800 via-blue-700 to-purple-800 text-white py-3 shadow-2xl z-50">
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="text-center">
-            <div className="flex items-center justify-center mb-1">
-              <span className="text-indigo-200 text-xs md:text-sm">Made with</span>
-              <Heart className="w-3 h-3 md:w-4 md:h-4 mx-1 md:mx-2 text-red-400 fill-current animate-pulse" />
-              <span className="text-indigo-200 text-xs md:text-sm">by</span>
-            </div>
-            <div className="text-sm md:text-base font-semibold text-white mb-1">
-              Prakash Palsaniya, Gyan Prakash & Kanhaiya Yadav
-            </div>
-            <div className="text-indigo-200 text-xs">
-              2023 IT Branch Students
-            </div>
-          </div>
-        </div>
-      </footer>
+     
     </div>
   )
 }
