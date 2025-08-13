@@ -1,6 +1,6 @@
 "use client"
 import { useEffect, useState } from "react"
-import { Users, Mail, IndianRupee, Trophy, Star } from "lucide-react"
+import { Users, Mail, IndianRupee, Trophy, Star, Heart } from "lucide-react"
 import Image from "next/image"
 
 // Simple Krishna-inspired logo component
@@ -65,13 +65,13 @@ export default function DonorsPage() {
       <div className="bg-gradient-to-r from-indigo-800 via-blue-700 to-purple-800 text-white relative">
         <div className="max-w-6xl mx-auto px-4 py-12">
           <div className="text-center">
-            <div className="inline-flex items-center justify-center w-30 h-30 bg-gradient-to-br from-yellow-400/30 via-amber-400/20 to-orange-400/30 rounded-full mb-6 p-2 shadow-2xl border-4 border-yellow-400/40">
+            <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-yellow-400/30 via-amber-400/20 to-orange-400/30 rounded-full mb-6 p-2 shadow-2xl border-4 border-yellow-400/40">
               <div className="w-full h-full rounded-full overflow-hidden shadow-lg ring-2 ring-white/50">
                 <Image
                   src="/krishna.jpg"
                   alt="Lord Krishna"
-                  width={200}
-                  height={180}
+                  width={100}
+                  height={100}
                   className="w-full h-full object-cover object-center"
                   priority
                 />
@@ -247,6 +247,25 @@ export default function DonorsPage() {
           )}
         </div>
       </div>
+
+      {/* Footer */}
+      <footer className="bg-gradient-to-r from-indigo-800 via-blue-700 to-purple-800 text-white py-8 mt-12">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="text-center">
+            <div className="flex items-center justify-center mb-4">
+              <span className="text-indigo-200">Made with</span>
+              <Heart className="w-5 h-5 mx-2 text-red-400 fill-current animate-pulse" />
+              <span className="text-indigo-200">by</span>
+            </div>
+            <div className="text-lg font-semibold text-white mb-2">
+              Prakash Palsaniya, Gyan Prakash & Kanhaiya Yadav
+            </div>
+            <div className="text-indigo-200 text-sm">
+              2023 IT Branch Students
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   )
 }
