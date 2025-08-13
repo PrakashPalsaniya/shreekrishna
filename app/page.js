@@ -10,18 +10,32 @@ export default function HomePage() {
   const [isLoading, setIsLoading] = useState(false)
   const [isAuthLoading, setIsAuthLoading] = useState(false)
 
-  const checkPass = async () => {
-    setIsAuthLoading(true)
-    
-    await new Promise((resolve) => setTimeout(resolve, 500))
+  
+const checkPass = async () => {
+  setIsAuthLoading(true);
 
-    if (password === process.env.NEXT_PUBLIC_ADMIN_PASS) {
-      setAuth(true)
+  try {
+    const res = await fetch("/api/check-pass", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ password }),
+    });
+
+    const data = await res.json();
+
+    if (res.ok && data.success) {
+      setAuth(true);
     } else {
-      alert("Access Denied")
+      alert("Access Denied");
     }
-    setIsAuthLoading(false)
+  } catch (error) {
+    console.error("Error verifying password:", error);
+    alert("Server error. Please try again.");
+  } finally {
+    setIsAuthLoading(false);
   }
+};
+
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value })
 
