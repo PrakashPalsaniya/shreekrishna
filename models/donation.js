@@ -5,7 +5,7 @@ const DonationSchema = new mongoose.Schema({
   email: { type: String, required: true },
   amount: { type: Number, required: true },
   date: { type: Date, default: Date.now },
-  year: {  // Fixed: no space after 'year'
+  year: {  
     type: Number,
     required: true
   }
