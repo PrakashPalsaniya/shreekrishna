@@ -1,103 +1,192 @@
-import Image from "next/image";
+"use client"
+import { useState } from "react"
+import { Lock, Crown, User, Mail, Calendar, DollarSign, Eye, EyeOff, Loader2 } from "lucide-react"
 
-export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              app/page.js
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+export default function HomePage() {
+  const [auth, setAuth] = useState(false)
+  const [password, setPassword] = useState("")
+  const [showPassword, setShowPassword] = useState(false)
+  const [form, setForm] = useState({ name: "", email: "", year: "", amount: "" })
+  const [isLoading, setIsLoading] = useState(false)
+  const [isAuthLoading, setIsAuthLoading] = useState(false)
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  const checkPass = async () => {
+    setIsAuthLoading(true)
+    // Simulate a small delay for better UX
+    await new Promise((resolve) => setTimeout(resolve, 500))
+
+    if (password === process.env.NEXT_PUBLIC_ADMIN_PASS) {
+      setAuth(true)
+    } else {
+      alert("Access Denied")
+    }
+    setIsAuthLoading(false)
+  }
+
+  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value })
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setIsLoading(true)
+
+    try {
+      const res = await fetch("/api/donate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...form, adminPass: password }),
+      })
+      const data = await res.json()
+      if (res.ok) {
+        alert("Donation submitted and email sent!")
+        setForm({ name: "", email: "", year: "", amount: "" })
+      } else {
+        alert(data.error || "Error")
+      }
+    } catch (error) {
+      alert("Network error. Please try again.")
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  if (!auth) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-blue-50 to-purple-50 flex items-center justify-center p-4">
+        <div className="w-full max-w-sm">
+          <div className="bg-white rounded-2xl shadow-xl p-8 border border-indigo-100">
+            <div className="text-center mb-8">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full mb-4">
+                <Lock className="w-8 h-8 text-indigo-600" />
+              </div>
+              <h1 className="text-2xl font-bold text-foreground mb-2 text-indigo-900">Admin Access</h1>
+              <p className="text-muted-foreground text-sm text-indigo-700">Enter your password to continue</p>
+            </div>
+
+            <div className="space-y-6">
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Enter Admin Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  disabled={isAuthLoading}
+                  className="w-full px-4 py-3 border border-indigo-200 bg-background text-foreground rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all duration-200 pr-12 placeholder:text-indigo-400 disabled:opacity-50 disabled:cursor-not-allowed"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  disabled={isAuthLoading}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-indigo-400 hover:text-indigo-600 transition-colors disabled:opacity-50"
+                >
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
+              </div>
+
+              <button
+                onClick={checkPass}
+                disabled={isAuthLoading}
+                className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 disabled:from-indigo-400 disabled:to-purple-400 disabled:cursor-not-allowed text-white font-semibold py-3 px-4 rounded-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl disabled:transform-none disabled:shadow-lg flex items-center justify-center gap-2"
+              >
+                {isAuthLoading && <Loader2 className="w-4 h-4 animate-spin" />}
+                {isAuthLoading ? "Verifying..." : "Access Dashboard"}
+              </button>
+            </div>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </div>
+    )
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-blue-50 to-purple-50 p-4">
+      <div className="max-w-lg mx-auto pt-8 pb-12">
+        <div className="bg-white rounded-2xl shadow-xl border border-indigo-100 overflow-hidden">
+          {/* Header */}
+          <div className="bg-gradient-to-r from-indigo-600 via-blue-600 to-purple-600 px-6 py-8 text-center">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 rounded-full mb-4">
+              <Crown className="w-8 h-8 text-yellow-300" />
+            </div>
+            <h1 className="text-2xl font-bold text-white mb-2">Krishna Janmashtami Donation</h1>
+            <p className="text-indigo-100 text-sm">Celebrate with devotion and generosity</p>
+          </div>
+
+          {/* Form */}
+          <div className="p-6">
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <div className="relative">
+                <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-indigo-400">
+                  <User className="w-5 h-5" />
+                </div>
+                <input
+                  name="name"
+                  value={form.name}
+                  onChange={handleChange}
+                  placeholder="Full Name"
+                  disabled={isLoading}
+                  className="w-full pl-12 pr-4 py-3 border border-indigo-200 bg-background text-foreground rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all duration-200 placeholder:text-indigo-400 disabled:opacity-50 disabled:cursor-not-allowed"
+                  required
+                />
+              </div>
+
+              <div className="relative">
+                <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-indigo-400">
+                  <Mail className="w-5 h-5" />
+                </div>
+                <input
+                  name="email"
+                  type="email"
+                  value={form.email}
+                  onChange={handleChange}
+                  placeholder="Email Address"
+                  disabled={isLoading}
+                  className="w-full pl-12 pr-4 py-3 border border-indigo-200 bg-background text-foreground rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all duration-200 placeholder:text-indigo-400 disabled:opacity-50 disabled:cursor-not-allowed"
+                  required
+                />
+              </div>
+
+              <div className="relative">
+                <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-indigo-400">
+                  <Calendar className="w-5 h-5" />
+                </div>
+                <input
+                  name="year"
+                  value={form.year}
+                  onChange={handleChange}
+                  placeholder="Year"
+                  disabled={isLoading}
+                  className="w-full pl-12 pr-4 py-3 border border-indigo-200 bg-background text-foreground rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all duration-200 placeholder:text-indigo-400 disabled:opacity-50 disabled:cursor-not-allowed"
+                  required
+                />
+              </div>
+
+              <div className="relative">
+                <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-indigo-400">
+                  <DollarSign className="w-5 h-5" />
+                </div>
+                <input
+                  name="amount"
+                  type="number"
+                  value={form.amount}
+                  onChange={handleChange}
+                  placeholder="Amount (₹)"
+                  disabled={isLoading}
+                  className="w-full pl-12 pr-4 py-3 border border-indigo-200 bg-background text-foreground rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all duration-200 placeholder:text-indigo-400 disabled:opacity-50 disabled:cursor-not-allowed"
+                  required
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full bg-gradient-to-r from-indigo-600 via-blue-600 to-purple-600 hover:from-indigo-700 hover:via-blue-700 hover:to-purple-700 disabled:from-indigo-400 disabled:via-blue-400 disabled:to-purple-400 disabled:cursor-not-allowed text-white font-semibold py-3 px-4 rounded-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl disabled:transform-none disabled:shadow-lg mt-6 flex items-center justify-center gap-2"
+              >
+                {isLoading && <Loader2 className="w-4 h-4 animate-spin" />}
+                {isLoading ? "Submitting..." : "Submit Donation"}
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
     </div>
-  );
+  )
 }
