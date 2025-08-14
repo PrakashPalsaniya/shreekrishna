@@ -1,13 +1,12 @@
 "use client"
-
-import React, { useState } from "react"
+import { useState, useEffect } from "react"
 import { Lock, Crown, User, Mail, Calendar, DollarSign, Eye, EyeOff, Loader2 } from "lucide-react"
 
 export default function HomePage() {
   const [auth, setAuth] = useState(false)
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
-  const [sessionToken, setSessionToken] = useState("") // Store token, not password
+  const [sessionToken, setSessionToken] = useState("")
   const [form, setForm] = useState({ name: "", email: "", year: "", amount: "" })
   const [isLoading, setIsLoading] = useState(false)
   const [isAuthLoading, setIsAuthLoading] = useState(false)
@@ -26,8 +25,8 @@ export default function HomePage() {
 
       if (res.ok && data.success && data.token) {
         setAuth(true);
-        setSessionToken(data.token); // Store the secure token
-        setPassword(""); // IMPORTANT: Clear password from memory
+        setSessionToken(data.token);
+        setPassword("");
       } else {
         alert("Access Denied");
       }
@@ -49,7 +48,6 @@ export default function HomePage() {
       const res = await fetch("/api/donate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        // SECURE: Send session token instead of password
         body: JSON.stringify({ ...form, sessionToken }),
       })
       const data = await res.json()
@@ -72,8 +70,8 @@ export default function HomePage() {
     }
   }
 
-  // Auto-logout after 25 minutes (before token expires)
-  React.useEffect(() => {
+  // FIXED: Use useEffect instead of React.useEffect
+  useEffect(() => {
     if (auth) {
       const timeout = setTimeout(() => {
         alert("Session will expire soon. Please re-authenticate.");
@@ -85,7 +83,6 @@ export default function HomePage() {
     }
   }, [auth]);
 
-  // Rest of your UI code remains exactly the same
   if (!auth) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-blue-50 to-purple-50 flex items-center justify-center p-4">
@@ -205,7 +202,7 @@ export default function HomePage() {
                   onChange={handleChange}
                   placeholder="Amount (₹)"
                   disabled={isLoading}
-                  className="w-full pl-12 pr-4 py-3 border border-indigo-200 bg-background text-foreground rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-all duration-200 placeholder:text-indigo-400 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full pl-12 pr-4 py-3 border border-indigo-200 bg-background text-foreground rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all duration-200 placeholder:text-indigo-400 disabled:opacity-50 disabled:cursor-not-allowed"
                   required
                 />
               </div>
