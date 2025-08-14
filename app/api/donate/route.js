@@ -1,4 +1,3 @@
-// /api/donate/route.js
 import { connectDB } from "@/lib/db";
 import Donation from "./../../../models/donation";
 import nodemailer from "nodemailer";
@@ -8,7 +7,7 @@ export async function POST(req) {
   try {
     const { name, email, amount, year, sessionToken } = await req.json();
     
-    // Verify JWT token
+    
     if (!isValidSessionToken(sessionToken)) {
       return new Response(JSON.stringify({ error: "Invalid or expired session" }), { status: 403 });
     }
@@ -75,21 +74,21 @@ Organising Committee, NIT Srinagar`
   }
 }
 
-// JWT token validation function
+
 function isValidSessionToken(token) {
   if (!token) return false;
   
   try {
-    // Verify and decode the JWT token
+    
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     
-    // Check if token contains required fields
+    
     if (!decoded.authenticated) return false;
     
-    // Token is valid and not expired (JWT handles expiration automatically)
+    
     return true;
   } catch (error) {
-    // Token is invalid or expired
+    
     console.error('JWT verification failed:', error.message);
     return false;
   }
