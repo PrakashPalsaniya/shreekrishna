@@ -6,36 +6,37 @@ export default function HomePage() {
   const [auth, setAuth] = useState(false)
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
+  const [sessionToken, setSessionToken] = useState("") // Store token, not password
   const [form, setForm] = useState({ name: "", email: "", year: "", amount: "" })
   const [isLoading, setIsLoading] = useState(false)
   const [isAuthLoading, setIsAuthLoading] = useState(false)
 
-  
-const checkPass = async () => {
-  setIsAuthLoading(true);
+  const checkPass = async () => {
+    setIsAuthLoading(true);
 
-  try {
-    const res = await fetch("/api/check-pass", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ password }),
-    });
+    try {
+      const res = await fetch("/api/check-pass", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password }),
+      });
 
-    const data = await res.json();
+      const data = await res.json();
 
-    if (res.ok && data.success) {
-      setAuth(true);
-    } else {
-      alert("Access Denied");
+      if (res.ok && data.success && data.token) {
+        setAuth(true);
+        setSessionToken(data.token); // Store the secure token
+        setPassword(""); // IMPORTANT: Clear password from memory
+      } else {
+        alert("Access Denied");
+      }
+    } catch (error) {
+      console.error("Error verifying password:", error);
+      alert("Server error. Please try again.");
+    } finally {
+      setIsAuthLoading(false);
     }
-  } catch (error) {
-    console.error("Error verifying password:", error);
-    alert("Server error. Please try again.");
-  } finally {
-    setIsAuthLoading(false);
-  }
-};
-
+  };
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value })
 
@@ -47,14 +48,21 @@ const checkPass = async () => {
       const res = await fetch("/api/donate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, adminPass: password }),
+        // SECURE: Send session token instead of password
+        body: JSON.stringify({ ...form, sessionToken }),
       })
       const data = await res.json()
       if (res.ok) {
         alert("Donation submitted and email sent!")
         setForm({ name: "", email: "", year: "", amount: "" })
       } else {
-        alert(data.error || "Error")
+        if (data.error?.includes("Invalid or expired session")) {
+          alert("Session expired. Please login again.");
+          setAuth(false);
+          setSessionToken("");
+        } else {
+          alert(data.error || "Error");
+        }
       }
     } catch (error) {
       alert("Network error. Please try again.")
@@ -63,6 +71,20 @@ const checkPass = async () => {
     }
   }
 
+  // Auto-logout after 25 minutes (before token expires)
+  React.useEffect(() => {
+    if (auth) {
+      const timeout = setTimeout(() => {
+        alert("Session will expire soon. Please re-authenticate.");
+        setAuth(false);
+        setSessionToken("");
+      }, 25 * 60 * 1000); // 25 minutes
+
+      return () => clearTimeout(timeout);
+    }
+  }, [auth]);
+
+  // Rest of your UI code remains exactly the same
   if (!auth) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-blue-50 to-purple-50 flex items-center justify-center p-4">
@@ -115,7 +137,6 @@ const checkPass = async () => {
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-blue-50 to-purple-50 p-4">
       <div className="max-w-lg mx-auto pt-8 pb-12">
         <div className="bg-white rounded-2xl shadow-xl border border-indigo-100 overflow-hidden">
-          {/* Header */}
           <div className="bg-gradient-to-r from-indigo-600 via-blue-600 to-purple-600 px-6 py-8 text-center">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 rounded-full mb-4">
               <Crown className="w-8 h-8 text-yellow-300" />
@@ -124,7 +145,6 @@ const checkPass = async () => {
             <p className="text-indigo-100 text-sm">Celebrate with devotion and generosity</p>
           </div>
 
-          {/* Form */}
           <div className="p-6">
             <form onSubmit={handleSubmit} className="space-y-5">
               <div className="relative">
@@ -184,7 +204,7 @@ const checkPass = async () => {
                   onChange={handleChange}
                   placeholder="Amount (₹)"
                   disabled={isLoading}
-                  className="w-full pl-12 pr-4 py-3 border border-indigo-200 bg-background text-foreground rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all duration-200 placeholder:text-indigo-400 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full pl-12 pr-4 py-3 border border-indigo-200 bg-background text-foreground rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-all duration-200 placeholder:text-indigo-400 disabled:opacity-50 disabled:cursor-not-allowed"
                   required
                 />
               </div>
