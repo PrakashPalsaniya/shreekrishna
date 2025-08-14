@@ -6,7 +6,7 @@ export async function POST(req) {
   try {
     const { name, email, amount, year, sessionToken } = await req.json();
     
-    // Validate session token instead of checking password again
+    
     if (!isValidSessionToken(sessionToken)) {
       return new Response(JSON.stringify({ error: "Invalid or expired session" }), { status: 403 });
     }
@@ -24,7 +24,7 @@ export async function POST(req) {
       amount 
     });
     
-    // Email sending code - FIXED: createTransport (not createTransporter)
+    
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -73,14 +73,14 @@ Organising Committee, NIT Srinagar`
   }
 }
 
-// Helper function to validate session tokens
+
 function isValidSessionToken(token) {
   if (!token || !global.validTokens) return false;
   
   const session = global.validTokens.get(token);
   if (!session) return false;
   
-  // Check if token expired
+  
   if (Date.now() > session.expires) {
     global.validTokens.delete(token);
     return false;
