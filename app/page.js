@@ -1,6 +1,6 @@
 "use client"
-import React from "react"
-import { useState } from "react"
+
+import React, { useState } from "react"
 import { Lock, Crown, User, Mail, Calendar, DollarSign, Eye, EyeOff, Loader2 } from "lucide-react"
 
 export default function HomePage() {
