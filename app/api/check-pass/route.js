@@ -5,13 +5,13 @@ export async function POST(req) {
     const { password } = await req.json();
     
     if (password === process.env.ADMIN_PASSS) { 
-      // Create JWT token with 30 minute expiration
+      
       const sessionToken = jwt.sign(
         { 
           authenticated: true,
           timestamp: Date.now()
         },
-        process.env.JWT_SECRET, // Make sure to add this to your .env file
+        process.env.JWT_SECRET, 
         { expiresIn: '30m' }
       );
       
@@ -20,7 +20,7 @@ export async function POST(req) {
         token: sessionToken 
       }), { status: 200 });
     } else {
-      // Add delay to prevent brute force attacks
+      
       await new Promise(resolve => setTimeout(resolve, 1000));
       return new Response(JSON.stringify({ success: false }), { status: 401 });
     }
