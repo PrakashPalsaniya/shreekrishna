@@ -20,11 +20,16 @@ const KrishnaLogo = ({ className }) => (
 
 export default function DonorsPage() {
   const [donors, setDonors] = useState([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     fetch("/api/donors")
       .then((res) => res.json())
-      .then((data) => setDonors(data))
+      .then((data) => {
+        setDonors(data)
+        setLoading(false)
+      })
+      .catch(() => setLoading(false))
   }, [])
 
   // Calculate total donations
@@ -97,7 +102,11 @@ export default function DonorsPage() {
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Total Donors</p>
-                <p className="text-2xl font-bold text-gray-900">{donors.length}</p>
+                {loading ? (
+                  <div className="h-6 w-12 bg-gray-200 animate-pulse rounded"></div>
+                ) : (
+                  <p className="text-2xl font-bold text-gray-900">{donors.length}</p>
+                )}
               </div>
             </div>
           </div>
@@ -109,7 +118,11 @@ export default function DonorsPage() {
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Total Raised</p>
-                <p className="text-2xl font-bold text-gray-900">₹{totalAmount.toLocaleString()}</p>
+                {loading ? (
+                  <div className="h-6 w-20 bg-gray-200 animate-pulse rounded"></div>
+                ) : (
+                  <p className="text-2xl font-bold text-gray-900">₹{totalAmount.toLocaleString()}</p>
+                )}
               </div>
             </div>
           </div>
@@ -121,9 +134,13 @@ export default function DonorsPage() {
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Top Donation</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  ₹{topDonor ? Number.parseFloat(topDonor.amount).toLocaleString() : "0"}
-                </p>
+                {loading ? (
+                  <div className="h-6 w-20 bg-gray-200 animate-pulse rounded"></div>
+                ) : (
+                  <p className="text-2xl font-bold text-gray-900">
+                    ₹{topDonor ? Number.parseFloat(topDonor.amount).toLocaleString() : "0"}
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -140,7 +157,13 @@ export default function DonorsPage() {
             </h2>
           </div>
 
-          {donors.length === 0 ? (
+          {loading ? (
+            <div className="p-6 space-y-4">
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="h-10 bg-gray-200 animate-pulse rounded"></div>
+              ))}
+            </div>
+          ) : donors.length === 0 ? (
             <div className="text-center py-12">
               <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
                 <Users className="w-8 h-8 text-gray-400" />
